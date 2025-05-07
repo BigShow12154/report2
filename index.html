@@ -1,0 +1,672 @@
+<!DOCTYPE html>  
+<html lang="zh-CN">  
+<head>  
+    <meta charset="UTF-8">  
+    <title>MDTS-Ⅰ 医用红外热像仪运动损伤评估报告</title>  
+    <style>  
+        /* 科技化样式设计 */  
+        :root {  
+            --primary-color: #007bff;  
+            --secondary-color: #2c3e50;  
+            --bg-color: #1a1a2e;  
+            --text-color: #e0e0e0;  
+        }  
+  
+        body {  
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;  
+            background: var(--bg-color);  
+            color: var(--text-color);  
+            margin: 0;  
+            padding: 0;  
+        }  
+  
+        .navbar {  
+            background: var(--secondary-color);  
+            padding: 1rem;  
+            display: flex;  
+            justify-content: space-between;  
+            align-items: center;  
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);  
+        }  
+  
+        .controls {  
+            display: flex;  
+            gap: 1rem;  
+        }  
+  
+        .control-group {  
+            display: flex;  
+            gap: 0.5rem;  
+            align-items: center;  
+        }  
+  
+        select, button {  
+            padding: 0.5rem 1rem;  
+            border: none;  
+            border-radius: 4px;  
+            background: var(--primary-color);  
+            color: white;  
+            cursor: pointer;  
+        }  
+  
+        button:hover {  
+            background: #0056b3;  
+        }  
+  
+        .container {  
+            display: grid;  
+            grid-template-columns: 1fr 3fr;  
+            gap: 1rem;  
+            padding: 1rem;  
+            height: calc(100vh - 60px);  
+        }  
+  
+        .sidebar {  
+            background: var(--secondary-color);  
+            padding: 1rem;  
+            border-radius: 8px;  
+            position: sticky;  
+            top: 1rem;  
+            height: fit-content;  
+        }  
+  
+        .sidebar a {  
+            color: var(--text-color);  
+            text-decoration: none;  
+            display: block;  
+            padding: 0.5rem;  
+            margin: 0.25rem 0;  
+            border-radius: 4px;  
+        }  
+  
+        .sidebar a:hover {  
+            background: var(--primary-color);  
+        }  
+  
+        .main-content {  
+            background: var(--secondary-color);  
+            padding: 2rem;  
+            border-radius: 8px;  
+            overflow-y: auto;  
+        }  
+  
+        .section {  
+            margin-bottom: 2rem;  
+            padding-bottom: 1rem;  
+            border-bottom: 1px solid rgba(255,255,255,0.1);  
+        }  
+  
+        .section-title {  
+            color: var(--primary-color);  
+            margin-bottom: 1rem;  
+            font-size: 1.2rem;  
+        }  
+  
+        .data-table {  
+            width: 100%;  
+            border-collapse: collapse;  
+            margin: 1rem 0;  
+        }  
+  
+        .data-table th, .data-table td {  
+            padding: 0.75rem;  
+            border: 1px solid rgba(255,255,255,0.1);  
+            text-align: left;  
+        }  
+  
+        .data-table th {  
+            background: rgba(0,0,0,0.2);  
+        }  
+  
+        .temperature-box {  
+            display: inline-block;  
+            padding: 0.5rem 1rem;  
+            border-radius: 4px;  
+            font-weight: bold;  
+        }  
+  
+        .high-temp {  
+            background: #ff4757;  
+        }  
+  
+        .low-temp {  
+            background: #2f89fc;  
+        }  
+  
+        .normal-temp {  
+            background: #2ed573;  
+        }  
+  
+        .chart-container {  
+            background: rgba(255,255,255,0.05);  
+            padding: 1rem;  
+            border-radius: 8px;  
+            margin: 1rem 0;  
+        }  
+  
+        .footnote {  
+            font-size: 0.8rem;  
+            color: #6c757d;  
+            margin-top: 2rem;  
+        }  
+  
+        /* 新增样式 */  
+        .info-grid {  
+            display: grid;  
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));  
+            gap: 1rem;  
+        }  
+  
+        .info-item {  
+            background: rgba(255,255,255,0.05);  
+            padding: 1rem;  
+            border-radius: 8px;  
+        }  
+  
+        .analysis-item, .conclusion-item, .plan-item, .attachment-item {  
+            background: rgba(255,255,255,0.05);  
+            padding: 1rem;  
+            border-radius: 8px;  
+            margin-bottom: 1rem;  
+        }  
+  
+        .validation-section {  
+            background: rgba(255,255,255,0.05);  
+            padding: 1rem;  
+            border-radius: 8px;  
+        }  
+    </style>  
+</head>  
+<body>  
+    <nav class="navbar">  
+        <h2>运动损伤红外热像评估系统</h2>  
+        <div class="controls">  
+            <div class="control-group">  
+                <label>选择检测人：</label>  
+                <select>  
+                    <option>张 XX</option>  
+                    <option>李 XX</option>  
+                    <option>王 XX</option>  
+                </select>  
+            </div>  
+            <div class="control-group">  
+                <label>选择检测时间：</label>  
+                <select>  
+                    <option>2025-03-07</option>  
+                    <option>2025-03-14</option>  
+                    <option>2025-03-22</option>  
+                </select>  
+            </div>  
+            <button>生成报告</button>  
+        </div>  
+    </nav>  
+  
+    <div class="container">  
+        <aside class="sidebar">  
+            <h3>报告导航</h3>  
+            <a href="#basic-info">基本信息</a>  
+            <a href="#detection-env">检测环境</a>  
+            <a href="#detection-methods">检测方法</a>  
+            <a href="#thermal-analysis">热像分析</a>  
+            <a href="#clinical-conclusion">临床结论</a>  
+            <a href="#follow-up">随访跟踪</a>  
+            <a href="#rehabilitation">康复计划</a>  
+            <a href="#attachments">附件</a>  
+            <a href="#validation">技术验证</a>  
+        </aside>  
+  
+        <main class="main-content">  
+            <!-- 基本信息部分 -->  
+            <section id="basic-info" class="section">  
+                <h2 class="section-title">受检者基本信息</h2>  
+                <div class="info-grid">  
+                    <div class="info-item">  
+                        <h3>个人与运动背景</h3>  
+                        <p>姓名：张 XX | 性别：男 | 年龄：28 岁</p>  
+                        <p>运动项目：足球 | 运动年限：10 年</p>  
+                        <p>主诉：左膝内侧反复刺痛 1 年，运动后肿胀，近期上下楼梯时疼痛加剧</p>  
+                        <p>现病史：2024 年 06 月训练中对抗性扭转致左膝扭伤，未行系统治疗，仅自行贴敷止痛膏。2025 年 04 月比赛后疼痛加重，影响跳跃及变向动作</p>  
+                        <p>既往史：2022 年右踝关节外侧韧带拉伤史；无高血压/糖尿病史</p>  
+                        <p>家族史：父亲有类风湿性关节炎病史（需警惕自身免疫性疾病风险）</p>  
+                    </div>  
+                    <div class="info-item">  
+                        <h3>检测信息</h3>  
+                        <p>检测时间：2025-03-07 14:30</p>  
+                        <p>环境温度：24.5℃ | 湿度：58%</p>  
+                        <p>设备型号：MDTS-Ⅰ 医用红外热像仪</p>  
+                        <p>波长范围：7.5-14μm</p>  
+                        <p>温度分辨率：≤0.01℃</p>  
+                        <p>NETD（噪声等效温差）：0.014℃</p>  
+                    </div>  
+                </div>  
+            </section>  
+  
+            <!-- 检测环境与设备 -->  
+            <section id="detection-env" class="section">  
+                <h2 class="section-title">检测环境与设备</h2>  
+                <div class="info-item">  
+                    <h3>检测环境</h3>  
+                    <p>检测时间：14 时 30 分</p>  
+                    <p>环境温度：24.5℃（±0.2℃）</p>  
+                    <p>湿度：58%（±3%）</p>  
+                </div>  
+                <div class="info-item">  
+                    <h3>检测设备</h3>  
+                    <p>设备型号：MDTS-Ⅰ 医用红外热像仪</p>  
+                    <p>波长范围：7.5-14μm</p>  
+                    <p>温度分辨率：≤0.01℃</p>  
+                    <p>NETD：0.014℃</p>  
+                    <p>检测体位：仰卧位（膝关节伸直，双足中立位，距热像仪 1.5 米）</p>  
+                    <p>符合标准：GB/T 19665-2024《红外成像人体表面测温筛查仪通用规范》</p>  
+                </div>  
+            </section>  
+  
+            <!-- 检测方法与图像采集 -->  
+            <section id="detection-methods" class="section">  
+                <h2 class="section-title">检测方法与图像采集</h2>  
+                <div class="analysis-item">  
+                    <h3>检测流程规范</h3>  
+                    <h4>受检者准备</h4>  
+                    <ul>  
+                        <li>检测前 48 小时内禁止剧烈运动、饮酒及桑拿浴</li>  
+                        <li>检测前静息 30 分钟，排空膀胱</li>  
+                        <li>穿着棉质短裤，避免皮肤直接接触冷/热刺激</li>  
+                    </ul>  
+                    <h4>图像采集</h4>  
+                    <ul>  
+                        <li>范围：双侧膝关节及上下 15cm 肌群</li>  
+                        <li>模式：静态图像（3 帧/部位，间隔 30 秒） + 动态序列（1200 帧连续采集）</li>  
+                        <li>伪彩处理：彩虹调色板（256 级灰度），温度阈值 28-38℃</li>  
+                    </ul>  
+                </div>  
+                <div class="analysis-item">  
+                    <h3>数据记录</h3>  
+                    <h4>原始数据存档</h4>  
+                    <ul>  
+                        <li>路径：D:\MDTS\20250307\ 张 XX\</li>  
+                        <li>格式：JPEG（静态）+ AVI（动态）</li>  
+                    </ul>  
+                    <h4>温度定量表（基线检测）</h4>  
+                    <table class="data-table">  
+                        <thead>  
+                            <tr>  
+                                <th>检测区域</th>  
+                                <th>左侧温度（℃）</th>  
+                                <th>右侧温度（℃）</th>  
+                                <th>温差（ΔT）</th>  
+                                <th>异常描述</th>  
+                            </tr>  
+                        </thead>  
+                        <tbody>  
+                            <tr>  
+                                <td>内侧副韧带起点</td>  
+                                <td>33.8±0.1</td>  
+                                <td>32.5±0.1</td>  
+                                <td><span class="temperature-box high-temp">+1.3℃</span></td>  
+                                <td>片状高温区，范围 5cm×3cm</td>  
+                            </tr>  
+                            <tr>  
+                                <td>髌腱胫骨结节附着处</td>  
+                                <td>32.2±0.2</td>  
+                                <td>32.7±0.1</td>  
+                                <td><span class="temperature-box low-temp">-0.5℃</span></td>  
+                                <td>条索状低温带沿腱走行</td>  
+                            </tr>  
+                            <tr>  
+                                <td>股四头肌内侧头</td>  
+                                <td>34.1±0.1</td>  
+                                <td>33.9±0.1</td>  
+                                <td><span class="temperature-box normal-temp">+0.2℃</span></td>  
+                                <td>温度分布均匀，无显著异常</td>  
+                            </tr>  
+                            <tr>  
+                                <td>腘绳肌肌腱</td>  
+                                <td>33.5±0.1</td>  
+                                <td>33.6±0.1</td>  
+                                <td><span class="temperature-box normal-temp">-0.1℃</span></td>  
+                                <td>对称性分布，无温差异常</td>  
+                            </tr>  
+                        </tbody>  
+                    </table>  
+                </div>  
+            </section>  
+  
+            <!-- 热像图分析与损伤评估 -->  
+            <section id="thermal-analysis" class="section">  
+                <h2 class="section-title">热像图分析与损伤评估</h2>  
+                <div class="chart-image-container">
+                    <img src="images/chart6.png" alt="热图" class="chart-image">
+                <div class="analysis-item">  
+                    <h3>正常对照与异常特征</h3>  
+                    <h4>对侧参考值范围（n=1000 例健康人群）</h4>  
+                    <ul>  
+                        <li>膝关节对称区域温差：≤0.3℃（95% CI）</li>  
+                        <li>关节区温度：32.0-33.0℃</li>  
+                        <li>股四头肌温度：33.5-34.5℃</li>  
+                    </ul>  
+                    <h4>异常特征量化分析</h4>  
+                    <h4>内侧副韧带区</h4>  
+                    <ul>  
+                        <li>温度异常：ΔT=+1.3℃（超出正常范围 4.3 倍）</li>  
+                        <li>形态异常：高温区边界清晰，与韧带解剖走行一致（5cm×3cm）</li>  
+                        <li>动态变化：屈膝 60° 时温度升至 34.2℃（ΔT=+1.7℃）</li>  
+                    </ul>  
+                    <h4>髌腱区</h4>  
+                    <ul>  
+                        <li>温度异常：ΔT=-0.5℃（低于正常范围 2.5 倍）</li>  
+                        <li>形态异常：低温带延伸至胫骨结节（4cm）</li>  
+                        <li>动态变化：负重屈膝时温度无显著变化</li>  
+                    </ul>  
+                </div>  
+                <div class="analysis-item">  
+                    <h3>损伤关联与分级</h3>  
+                    <table class="data-table">  
+                        <thead>  
+                            <tr>  
+                                <th>损伤类型</th>  
+                                <th>热像特征匹配</th>  
+                                <th>严重程度分级</th>  
+                                <th>解剖定位</th>  
+                                <th>病理机制</th>  
+                            </tr>  
+                        </thead>  
+                        <tbody>  
+                            <tr>  
+                                <td>慢性肌腱炎</td>  
+                                <td>肌腱止点低温/混合温度区</td>  
+                                <td>Ⅱ 级</td>  
+                                <td>左髌腱胫骨结节附着处</td>  
+                                <td>胶原纤维紊乱，新生血管减少</td>  
+                            </tr>  
+                            <tr>  
+                                <td>关节周围炎</td>  
+                                <td>韧带起点局限性高温区</td>  
+                                <td>Ⅱ 级</td>  
+                                <td>左膝内侧副韧带起点</td>  
+                                <td>滑膜增生，血管通透性增加</td>  
+                            </tr>  
+                        </tbody>  
+                    </table>  
+                </div>  
+            </section>  
+  
+            <!-- 临床综合结论 -->  
+            <section id="clinical-conclusion" class="section">  
+                <h2 class="section-title">临床综合结论</h2>  
+                <div class="conclusion-item">  
+                    <h3>诊断结论</h3>  
+                    <h4>左膝内侧副韧带慢性损伤急性发作</h4>  
+                    <ul>  
+                        <li>热像特征：ΔT=+1.3℃（5cm×3cm），动态温差扩大至 +1.7℃</li>  
+                        <li>病理基础：胶原纤维部分断裂，伴局部充血水肿</li>  
+                        <li>鉴别诊断：排除感染性关节炎（无全身发热，实验室检查正常）</li>  
+                    </ul>  
+                    <h4>左髌腱止点炎</h4>  
+                    <ul>  
+                        <li>热像特征：ΔT=-0.5℃（条索状低温带），负重位温度无改善</li>  
+                        <li>病理基础：肌腱退变伴钙化，局部微循环障碍</li>  
+                        <li>鉴别诊断：排除髌腱断裂（MRI 显示肌腱连续性完整）</li>  
+                    </ul>  
+                </div>  
+                <div class="conclusion-item">  
+                    <h3>热像关键指标</h3>  
+                    <h4>内侧副韧带区</h4>  
+                    <ul>  
+                        <li>动态温差变化率：0.4℃/10° 屈膝</li>  
+                        <li>温度恢复时间：从 34.2℃ 降至 33.8℃ 需 8 分钟</li>  
+                    </ul>  
+                    <h4>髌腱区</h4>  
+                    <ul>  
+                        <li>低温带密度值：-0.3℃/cm</li>  
+                        <li>温度波动范围：0.1℃（显著低于正常关节区的 0.5℃）</li>  
+                    </ul>  
+                </div>  
+            </section>  
+  
+            <!-- 随访数据跟踪 -->  
+            <section id="follow-up" class="section">  
+                <h2 class="section-title">随访数据跟踪</h2>  
+                <h3>1 周内（2025-03-14）复查数据</h3>  
+                <table class="data-table">  
+                    <thead>  
+                        <tr>  
+                            <th>检测区域</th>  
+                            <th>左侧温度（℃）</th>  
+                            <th>右侧温度（℃）</th>  
+                            <th>温差（ΔT）</th>  
+                            <th>变化率</th>  
+                        </tr>  
+                    </thead>  
+                    <tbody>  
+                        <tr>  
+                            <td>内侧副韧带起点</td>  
+                            <td>33.2±0.1</td>  
+                            <td>32.5±0.1</td>  
+                            <td><span class="temperature-box high-temp">+0.7℃</span></td>  
+                            <td>-0.6℃/周</td>  
+                        </tr>  
+                        <tr>  
+                            <td>髌腱胫骨结节附着处</td>  
+                            <td>32.4±0.1</td>  
+                            <td>32.7±0.1</td>  
+                            <td><span class="temperature-box low-temp">-0.3℃</span></td>  
+                            <td>+0.2℃/周</td>  
+                        </tr>  
+                    </tbody>  
+                </table>  
+                <h3>15 天内（2025-03-22）复查数据</h3>  
+                <table class="data-table">  
+                    <thead>  
+                        <tr>  
+                            <th>检测区域</th>  
+                            <th>左侧温度（℃）</th>  
+                            <th>右侧温度（℃）</th>  
+                            <th>温差（ΔT）</th>  
+                            <th>变化率</th>  
+                        </tr>  
+                    </thead>  
+                    <tbody>  
+                        <tr>  
+                            <td>内侧副韧带起点</td>  
+                            <td>32.9±0.1</td>  
+                            <td>32.5±0.1</td>  
+                            <td><span class="temperature-box high-temp">+0.4℃</span></td>  
+                            <td>-0.9℃/15 天</td>  
+                        </tr>  
+                        <tr>  
+                            <td>髌腱胫骨结节附着处</td>  
+                            <td>32.6±0.1</td>  
+                            <td>32.7±0.1</td>  
+                            <td><span class="temperature-box low-temp">-0.1℃</span></td>  
+                            <td>+0.4℃/15 天</td>  
+                        </tr>  
+                    </tbody>  
+                </table>  
+            </section>  
+  
+            <!-- 动态折线图分析 -->  
+            <section id="dynamic-charts" class="section">  
+                <h2 class="section-title">动态折线图分析</h2>  
+                <div class="chart-container">  
+                    <h3>温差变化趋势图</h3>  
+                    <div class="chart-image-container">
+                        <img src="images/chart1.png" alt="左膝内侧副韧带区ΔT变化趋势图" class="chart-image">
+                    </div>
+                    <h4>图 1：左膝内侧副韧带区 ΔT 随时间变化</h4>  
+                    <p>横轴：检测时间（2025-03-07、2025-03-14、2025-03-22）</p>  
+                    <p>纵轴：温差（ΔT，℃）</p>  
+                    <p>数据点：基线 +1.3℃ → 1 周 +0.7℃ → 15 天 +0.4℃</p>  
+                    <p>趋势线：线性下降（R²=0.98，P＜0.01）</p>  
+                    <div class="chart-image-container">
+                        <img src="images/chart2.png" alt="左髌腱区ΔT变化趋势图" class="chart-image">
+                    <h4>图 2：左髌腱区 ΔT 随时间变化</h4>  
+                    <p>横轴：检测时间（2025-03-07、2025-03-14、2025-03-22）</p>  
+                    <p>纵轴：温差（ΔT，℃）</p>  
+                    <p>数据点：基线 -0.5℃ → 1 周 -0.3℃ → 15 天 -0.1℃</p>  
+                    <p>趋势线：指数回升（R²=0.95，P＜0.05）</p>  
+                </div>  
+                <div class="chart-container">  
+                    <h3>临床症状与温差关联分析</h3>  
+                    <h4>相关性分析结果</h4>  
+                    <ul>  
+                        <li>VAS 评分与 ΔT 的相关性：内侧副韧带区 ΔT 每降低 0.1℃，VAS 评分下降 0.8 分（r=-0.92，P＜0.01）</li>  
+                        <li>髌腱区 ΔT 每回升 0.1℃，单腿蹲起测试成功率提升 15%（r=0.89，P＜0.05）</li>  
+                    </ul>  
+                    <h4>功能恢复与温度变化的时序关系</h4>  
+                    <ul>  
+                        <li>关节活动度改善滞后于温差变化约 3 天</li>  
+                        <li>疼痛缓解与内侧副韧带区 ΔT 下降同步</li>  
+                    </ul>  
+                </div>  
+            </section>  
+  
+            <!-- 最终康复结论 -->  
+            <section id="rehabilitation" class="section">  
+                <h2 class="section-title">最终康复结论</h2>  
+                <div class="conclusion-item">  
+                    <h3>恢复阶段判定</h3>  
+                    <h4>内侧副韧带损伤</h4>  
+                    <ul>  
+                        <li>当前阶段：从急性炎症期（ΔT＞1.0℃）过渡至修复期（ΔT 0.5-1.0℃）</li>  
+                        <li>预期进程：预计 2 周后进入重塑期（ΔT＜0.5℃）</li>  
+                    </ul>  
+                    <h4>髌腱炎</h4>  
+                    <ul>  
+                        <li>当前阶段：从纤维化期（ΔT≤-0.5℃）进入血管再生期（ΔT＞-0.3℃）</li>  
+                        <li>预期进程：6 周后可恢复专项训练</li>  
+                    </ul>  
+                </div>  
+                <div class="conclusion-item">  
+                    <h3>重返运动计划</h3>  
+                    <h4>阶段一（2025-03-23 至 2025-04-05）</h4>  
+                    <ul>  
+                        <li>有氧运动：游泳（20 分钟/次，每周 3 次）</li>  
+                        <li>力量训练：靠墙静蹲（30 秒/次，5 组/日）</li>  
+                        <li>专项训练：直线带球（无对抗，10 分钟/次）</li>  
+                    </ul>  
+                    <h4>阶段二（2025-06-06 起）</h4>  
+                    <ul>  
+                        <li>高强度训练：变向跑（Z 字跑，5 次/组，3 组/日）</li>  
+                        <li>功能测试：单腿跳远（目标≥80% 健侧距离）</li>  
+                        <li>监测指标：每周复查热像图</li>  
+                    </ul>  
+                </div>  
+            </section>  
+  
+            <!-- 附件 -->  
+            <section id="attachments" class="section">  
+                <h2 class="section-title">附件</h2>  
+                <div class="attachment-item">  
+                    <h3>热像图资料</h3>  
+                    <div class="chart-image-container">
+                        <img src="images/chart3.png" alt="左膝静息位热像图" class="chart-image">
+                    <h4>图 1：左膝静息位热像图（彩虹调色板）</h4>  
+                    <p>内侧副韧带区显示红色高温区（33.8℃），对比右侧同区域温度 32.5℃，温差 +1.3℃</p>  
+                    <p>髌腱区显示蓝色低温带（32.2℃），与胫骨结节区温度 32.7℃ 形成对比</p>  
+                    <div class="chart-image-container">
+                        <img src="images/chart4.png" alt="内侧副韧带区热像图" class="chart-image">
+                    <h4>图 2：2025-03-14 内侧副韧带区热像图</h4>  
+                    <p>高温区范围缩小至 3cm×2cm，温度 33.2℃，温差 +0.7℃</p>  
+                    <p>边缘模糊，提示炎症边界开始吸收</p>  
+                    <div class="chart-image-container">
+                        <img src="images/chart5.png" alt="内侧副韧带区热像图" class="chart-image">
+                    <h4>图 3：2025-03-22 髌腱区热像图</h4>  
+                    <p>低温带消失，温度 32.6℃，温差 -0.1℃</p>  
+                    <p>胫骨结节区温度均匀，反映循环改善</p>  
+                </div>  
+                <div class="attachment-item">  
+                    <h3>动态折线图原始数据</h3>  
+                    <table class="data-table">  
+                        <thead>  
+                            <tr>  
+                                <th>检测日期</th>  
+                                <th>内侧副韧带 ΔT（℃）</th>  
+                                <th>髌腱 ΔT（℃）</th>  
+                                <th>VAS 评分</th>  
+                                <th>单腿蹲起测试</th>  
+                                <th>关节活动度（°）</th>  
+                            </tr>  
+                        </thead>  
+                        <tbody>  
+                            <tr>  
+                                <td>2025-03-07</td>  
+                                <td>+1.3</td>  
+                                <td>-0.5</td>  
+                                <td>6</td>  
+                                <td>失败</td>  
+                                <td>75</td>  
+                            </tr>  
+                            <tr>  
+                                <td>2025-03-14</td>  
+                                <td>+0.7</td>  
+                                <td>-0.3</td>  
+                                <td>4</td>  
+                                <td>成功但疼痛</td>  
+                                <td>90</td>  
+                            </tr>  
+                            <tr>  
+                                <td>2025-03-22</td>  
+                                <td>+0.4</td>  
+                                <td>-0.1</td>  
+                                <td>2</td>  
+                                <td>成功无疼痛</td>  
+                                <td>120</td>  
+                            </tr>  
+                        </tbody>  
+                    </table>  
+                </div>  
+            </section>  
+  
+            <!-- 技术验证与数据合理性说明 -->  
+            <section id="validation" class="section validation-section">  
+                <h2 class="section-title">技术验证与数据合理性说明</h2>  
+                <div class="analysis-item">  
+                    <h3>温差变化依据</h3>  
+                    <h4>急性炎症消退机制</h4>  
+                    <ul>  
+                        <li>超短波治疗通过高频电磁场促进局部血液循环，加速炎症介质清除</li>  
+                        <li>冷敷通过收缩血管减少渗出，与温度恢复时间 8 分钟吻合</li>  
+                    </ul>  
+                    <h4>慢性循环改善机制</h4>  
+                    <ul>  
+                        <li>低频电疗刺激血管内皮生长因子（VEGF）表达，促进新生血管形成</li>  
+                        <li>离心训练通过机械应力刺激肌腱胶原重塑</li>  
+                    </ul>  
+                </div>  
+                <div class="analysis-item">  
+                    <h3>折线图设计规范</h3>  
+                    <h4>数据标注</h4>  
+                    <ul>  
+                        <li>温度值精确到小数点后 1 位，符合设备分辨率（≤0.01℃）</li>  
+                        <li>误差范围采用 ± 标准差（SD）表示</li>  
+                    </ul>  
+                    <h4>趋势分析</h4>  
+                    <ul>  
+                        <li>采用线性回归与指数回归模型，符合康复规律</li>  
+                        <li>统计显著性检验通过 SPSS 26.0 软件完成</li>  
+                    </ul>  
+                </div>  
+                <div class="analysis-item">  
+                    <h3>临床关联验证</h3>  
+                    <h4>功能恢复与温度的相关性</h4>  
+                    <ul>  
+                        <li>单腿蹲起测试结果与髌腱区 ΔT 变化的吻合度达 89%</li>  
+                        <li>关节活动度改善滞后效应（3 天），符合生理过程</li>  
+                    </ul>  
+                </div>  
+                <div class="analysis-item">  
+                    <h3>多模态评估优势</h3>  
+                    <ul>  
+                        <li>结构-功能联合分析：超声显示韧带增厚与热像高温区对应</li>  
+                        <li>动态监测价值：热像图变化早于 MRI 信号改变（平均提前 7 天）</li>  
+                    </ul>  
+                </div>  
+            </section>  
+  
+            <p class="footnote">*本报告由 MDTS-Ⅰ 医用红外热像仪生成，数据仅供参考，具体诊疗请遵医嘱。    
+检测医师签名：李 XX 职称：主任医师 报告日期：2025-03-22    
+审核医师签名：王 XX 职称：教授 审核日期：2025-03-23</p>  
+        </main>  
+    </div>  
+</body>  
+</html>
